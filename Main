@@ -1,0 +1,126 @@
+import time
+import random
+import threading
+from datetime import datetime
+
+# ==============================
+# SENSOR SIMULATION LAYER
+# (Replace later with real sensors)
+# ==============================
+
+class Sensors:
+
+    def infrared(self):
+        return random.uniform(20, 120)   # heat signature
+
+    def acoustic(self):
+        return random.uniform(10, 100)   # sound intensity
+
+    def motion(self):
+        return random.uniform(0, 1)      # movement probability
+
+
+# ==============================
+# SENSOR FUSION ENGINE
+# ==============================
+
+class FusionEngine:
+
+    def calculate_threat(self, heat, sound, motion):
+
+        # Weighted scoring model
+        heat_score = min(heat / 120, 1.0)
+        sound_score = min(sound / 100, 1.0)
+        motion_score = motion
+
+        threat_level = (
+            0.4 * heat_score +
+            0.35 * sound_score +
+            0.25 * motion_score
+        )
+
+        return threat_level
+
+
+# ==============================
+# DEFENSE SYSTEM
+# ==============================
+
+class DefenseSystem:
+
+    def respond(self, threat):
+
+        if threat > 0.75:
+            print("🚨 CRITICAL THREAT — FULL DEFENSE ACTIVATED")
+        elif threat > 0.5:
+            print("⚠ Tracking Target...")
+        else:
+            print("✅ Environment Safe")
+
+
+# ==============================
+# LOGGER
+# ==============================
+
+def log_event(message):
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] {message}")
+
+
+# ==============================
+# MAIN CONTROLLER
+# ==============================
+
+class Controller:
+
+    def __init__(self):
+        self.sensors = Sensors()
+        self.fusion = FusionEngine()
+        self.defense = DefenseSystem()
+        self.running = True
+
+    def monitor_loop(self):
+
+        while self.running:
+
+            heat = self.sensors.infrared()
+            sound = self.sensors.acoustic()
+            motion = self.sensors.motion()
+
+            threat = self.fusion.calculate_threat(
+                heat, sound, motion
+            )
+
+            log_event(
+                f"Heat:{heat:.1f} "
+                f"Sound:{sound:.1f} "
+                f"Motion:{motion:.2f} "
+                f"Threat:{threat:.2f}"
+            )
+
+            self.defense.respond(threat)
+
+            time.sleep(2)
+
+
+# ==============================
+# PARALLEL SYSTEM EXECUTION
+# ==============================
+
+def start_system():
+    controller = Controller()
+
+    monitor_thread = threading.Thread(
+        target=controller.monitor_loop
+    )
+
+    monitor_thread.start()
+
+
+# ==============================
+# RUN SYSTEM
+# ==============================
+
+if __name__ == "__main__":
+    print("\n🧠 Intelligent Sensor Fusion Controller Started\n")
+    start_system()
